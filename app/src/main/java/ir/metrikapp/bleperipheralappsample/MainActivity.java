@@ -51,12 +51,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             });
     private BluetoothManager bluetoothService;
     private BluetoothGattServer mGattServer;
-    private BluetoothGattCharacteristic mWriteCharacteristic;
     private BluetoothGattCharacteristic mNotifyCharacteristic;
-    private BluetoothLeAdvertiser advertiser;
-    private AdvertiseCallback advertisingCallback;
-
-    private BluetoothGattServerCallback bluetoothGattServerCallback = new BluetoothGattServerCallback() {
+    private final BluetoothGattServerCallback bluetoothGattServerCallback = new BluetoothGattServerCallback() {
         @Override
         public void onConnectionStateChange(BluetoothDevice device, int status, int newState) {
             super.onConnectionStateChange(device, status, newState);
@@ -80,7 +76,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         @Override
         public void onCharacteristicWriteRequest(BluetoothDevice device, int requestId, BluetoothGattCharacteristic characteristic, boolean preparedWrite, boolean responseNeeded, int offset, byte[] value) {
             super.onCharacteristicWriteRequest(device, requestId, characteristic, preparedWrite, responseNeeded, offset, value);
-//            runOnUiThread(() -> Toast.makeText(MainActivity.this, "onCharacteristicWriteRequest: " + Arrays.toString(value), Toast.LENGTH_SHORT).show());
 
             String message = new String(value, StandardCharsets.UTF_8);
             runOnUiThread(() -> Toast.makeText(MainActivity.this, "onCharacteristicWriteRequest: " + message, Toast.LENGTH_SHORT).show());
@@ -118,7 +113,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             } else {
                 result = "ERROR";
             }
-            
+
             mNotifyCharacteristic.setValue(result);
 
             mGattServer.notifyCharacteristicChanged(device, mNotifyCharacteristic, false);
@@ -168,6 +163,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             super.onPhyRead(device, txPhy, rxPhy, status);
         }
     };
+    private BluetoothLeAdvertiser advertiser;
+    private AdvertiseCallback advertisingCallback;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -294,7 +291,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         we need to grant to the Client permission to read (for when the user clicks the "Request Characteristic" button).
         no need for notify permission as this is an action the Server initiate.
          */
-        mWriteCharacteristic = new BluetoothGattCharacteristic(characteristicWriteUuid, BluetoothGattCharacteristic.PROPERTY_WRITE, BluetoothGattCharacteristic.PERMISSION_WRITE);
+        BluetoothGattCharacteristic mWriteCharacteristic = new BluetoothGattCharacteristic(characteristicWriteUuid, BluetoothGattCharacteristic.PROPERTY_WRITE, BluetoothGattCharacteristic.PERMISSION_WRITE);
         mNotifyCharacteristic = new BluetoothGattCharacteristic(characteristicNotifyUuid, BluetoothGattCharacteristic.PROPERTY_NOTIFY, BluetoothGattCharacteristic.PERMISSION_READ);
 //        setCharacteristic(); // set initial state
         // add the Characteristic to the Service

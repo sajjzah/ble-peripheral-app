@@ -40,7 +40,6 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
 
-    // Permission Handling
     implementation "androidx.fragment:fragment:1.3.3"
 
     implementation "androidx.core:core:1.3.2"
